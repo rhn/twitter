@@ -16,7 +16,7 @@ from .oauth import (
 from .oauth2 import (
     OAuth2, read_bearer_token_file, write_bearer_token_file,
     __doc__ as oauth2_doc)
-from .stream import TwitterStream
+from .stream import TwitterStream, StreamError, Timeout, Hangup, DecodeError, HeartbeatTimeout
 from .oauth_dance import oauth_dance, oauth2_dance
 
 __doc__ = __doc__ or ""
@@ -77,6 +77,11 @@ __all__ = [
     "TwitterHTTPError",
     "TwitterResponse",
     "TwitterStream",
+    'StreamError',
+    'Timeout',
+    'Hangup',
+    'DecodeError',
+    'HeartbeatTimeout',
     "UserPassAuth",
     "write_bearer_token_file",
     "write_token_file",

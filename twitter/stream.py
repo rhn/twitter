@@ -22,10 +22,12 @@ MIN_SOCK_TIMEOUT = 0.0  # Apparenty select with zero wait is okay!
 MAX_SOCK_TIMEOUT = 10.0
 HEARTBEAT_TIMEOUT = 90.0
 
-Timeout = {'timeout': True}
-Hangup = {'hangup': True}
-DecodeError = {'hangup': True, 'decode_error': True}
-HeartbeatTimeout = {'hangup': True, 'heartbeat_timeout': True}
+class StreamError(Exception): pass
+
+class Timeout(StreamError): pass
+class Hangup(StreamError): pass
+class DecodeError(Hangup): pass
+class HeartbeatTimeout(Hangup): pass
 
 
 class HttpChunkDecoder(object):
@@ -190,16 +192,13 @@ class TwitterJSONIter(object):
 
             # Yield timeouts and special things:
             if end_of_stream:
-                yield Hangup
-                break
+                raise Hangup
             if decode_error:
-                yield DecodeError
-                break
+                raise DecodeError
             if heartbeat_timer.expired():
-                yield HeartbeatTimeout
-                break
+                raise HeartbeatTimeout
             if timer.expired():
-                yield self.timeout_token
+                raise self.timeout_token
 
 
 def handle_stream_response(req, uri, arg_data, block, timeout, heartbeat_timeout):
